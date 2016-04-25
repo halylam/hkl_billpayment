@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://pkg" xmlns:ax27="http://pkg/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://pkg">
+    <wsdl:documentation>
+		Onlinepayment Services
+	</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://pkg/xsd">
+            <xs:complexType name="PaymentServiceResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="accountStatus" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="amount" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="hutch" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="payee" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="receiptNo" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="refAccount" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="trnxMessage" type="xs:int"/>
+                    <xs:element minOccurs="0" name="trxnId" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ax28="http://pkg/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://pkg">
+            <xs:import namespace="http://pkg/xsd"/>
+            <xs:element name="updateOnline">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="trxnID" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="domainID" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="MobileNo" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="amount" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="payee" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="channel" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="Password" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="Text1" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="updateOnlineResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax27:PaymentServiceResponse"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="TestService">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="channel" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="payee" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="trxnID" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="TestServiceResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax27:PaymentServiceResponse"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="TestServiceRequest">
+        <wsdl:part name="parameters" element="ns:TestService"/>
+    </wsdl:message>
+    <wsdl:message name="TestServiceResponse">
+        <wsdl:part name="parameters" element="ns:TestServiceResponse"/>
+    </wsdl:message>
+    <wsdl:message name="updateOnlineRequest">
+        <wsdl:part name="parameters" element="ns:updateOnline"/>
+    </wsdl:message>
+    <wsdl:message name="updateOnlineResponse">
+        <wsdl:part name="parameters" element="ns:updateOnlineResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="PaymentServicePortType">
+        <wsdl:operation name="TestService">
+            <wsdl:input message="ns:TestServiceRequest" wsaw:Action="urn:TestService"/>
+            <wsdl:output message="ns:TestServiceResponse" wsaw:Action="urn:TestServiceResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="updateOnline">
+            <wsdl:input message="ns:updateOnlineRequest" wsaw:Action="urn:updateOnline"/>
+            <wsdl:output message="ns:updateOnlineResponse" wsaw:Action="urn:updateOnlineResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="PaymentServiceSoap11Binding" type="ns:PaymentServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="TestService">
+            <soap:operation soapAction="urn:TestService" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="updateOnline">
+            <soap:operation soapAction="urn:updateOnline" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="PaymentServiceSoap12Binding" type="ns:PaymentServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="TestService">
+            <soap12:operation soapAction="urn:TestService" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="updateOnline">
+            <soap12:operation soapAction="urn:updateOnline" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="PaymentServiceHttpBinding" type="ns:PaymentServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="TestService">
+            <http:operation location="TestService"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="updateOnline">
+            <http:operation location="updateOnline"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="PaymentService">
+        <wsdl:port name="PaymentServiceHttpSoap11Endpoint" binding="ns:PaymentServiceSoap11Binding">
+            <soap:address location="http://localhost:8080/axis2/services/PaymentService.PaymentServiceHttpSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="PaymentServiceHttpSoap12Endpoint" binding="ns:PaymentServiceSoap12Binding">
+            <soap12:address location="http://localhost:8080/axis2/services/PaymentService.PaymentServiceHttpSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="PaymentServiceHttpEndpoint" binding="ns:PaymentServiceHttpBinding">
+            <http:address location="http://localhost:8080/axis2/services/PaymentService.PaymentServiceHttpEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,38 @@
+<configuration scan="true">
+
+	<property name="LOG_HOME" value="${billpayment.home}/logs" />
+
+	<appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/out.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/backup/out-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>5MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n%ex</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n%ex</pattern>
+		</encoder>
+	</appender>
+
+	<root>
+		<level value="WARN" />
+		<appender-ref ref="STDOUT" />
+	</root>
+
+	<logger name="ru.bpc" additivity="false">
+		<level value="TRACE" />
+		<appender-ref ref="ROLLING" />
+	</logger>
+
+	<logger name="com.sun.common.util.logging" additivity="false">
+		<level value="ERROR" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+</configuration>

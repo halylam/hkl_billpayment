@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.bpc.ru/web/iso8583/messages"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:msg="http://www.bpc.ru/web/iso8583/messages"
+	xmlns:elm="http://www.bpc.ru/web/iso8583/elements"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <import namespace="http://www.bpc.ru/web/iso8583/elements" schemaLocation="elements.xsd" />
+
+	<complexType name="message">
+		<sequence>
+			<element name="field" type="msg:field" maxOccurs="unbounded"
+				minOccurs="0">
+			</element>
+		</sequence>
+		<attribute name="type" type="int" use="required"></attribute>
+	</complexType>
+
+	<complexType name="field">
+		<complexContent>
+			<extension base="elm:field">
+				<attribute name="presence">
+					<simpleType>
+						<restriction base="string">
+							<enumeration value="M" />
+							<enumeration value="O" />
+						</restriction>
+					</simpleType>
+				</attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="messagesType">
+		<sequence>
+			<element name="message" type="msg:message"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+
+	<element name="messages" type="msg:messagesType"></element>
+</schema>

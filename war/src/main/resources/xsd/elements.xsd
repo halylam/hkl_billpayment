@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.bpc.ru/web/iso8583/elements" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:elm="http://www.bpc.ru/web/iso8583/elements">
+
+    <complexType name="fields">
+    	<sequence>
+    		<element name="field" type="elm:field" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="field">
+    	<sequence>
+    		<element name="description" type="string" minOccurs="0" maxOccurs="1"></element>
+    		<element name="as-object" type="elm:as-object" minOccurs="0" maxOccurs="1"></element>
+    		<element name="handler" type="string" minOccurs="0" maxOccurs="1"></element>
+    	</sequence>
+    	<attribute name="id" type="int" use="required"></attribute>
+    	<attribute name="type" type="string" use="optional"></attribute>
+    	<attribute name="sensitive" type="boolean" default="false"></attribute>
+    </complexType>
+
+    <complexType name="as-object">
+    	<attribute name="type" type="string" use="required"></attribute>
+    	<attribute name="format" type="string" use="optional"></attribute>
+    </complexType>
+
+    <element name="elements" type="elm:elements">
+    </element>
+    
+    <complexType name="elements">
+    	<sequence>
+    		<element name="messageTypeEncoding" type="elm:encoding" maxOccurs="1" minOccurs="0"/>
+    		<element name="fieldLengthEncoding" type="elm:encoding" maxOccurs="1" minOccurs="0"/>
+    		<element name="bitMaskEncoding" type="elm:bitmask" maxOccurs="1" minOccurs="0"/>
+    		<element name="fields" type="elm:fields" maxOccurs="1" minOccurs="1">
+    		    <unique name="uniqueFieldId">
+                    <selector xpath="child::*"/>
+                    <field xpath="@id"/>
+                </unique>
+    		</element>
+    	</sequence>
+    </complexType>
+    <simpleType name="encoding">
+    	<restriction base="string">
+    		<enumeration value="latin1"/>
+    		<enumeration value="binary"/>
+    		<enumeration value="bcd"/>
+    	</restriction>
+    </simpleType> 
+    <simpleType name="bitmask">
+    	<restriction base="string">
+    		<enumeration value="binary"/>
+    		<enumeration value="ascii"/>
+    	</restriction>
+    </simpleType>       
+</schema>

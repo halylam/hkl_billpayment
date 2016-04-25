@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tags>
+	<tag id="01" type="n 9">
+		<description>Order number</description>
+	</tag>
+	<tag id="02" type="n 6">
+		<description>Debt period date/time</description>
+		<as-object type="date" format="yyMMdd" />
+	</tag>
+	<tag id="03" type="ans ...999">
+		<description>Payment variant</description>
+	</tag>
+	<tag id="04" type="ans ...20">
+		<description>Account number</description>
+	</tag>
+	<tag id="05" type="ans ...42">
+		<description>Debt description</description>
+	</tag>
+	<tag id="06" type="ans 3">
+		<description>Debt type</description>
+	</tag>
+	<tag id="07" type="n 6">
+		<description>Debt open date</description>
+		<as-object type="date" format="yyMMdd" />
+	</tag>
+	<tag id="08" type="a 3">
+		<description>Account currency</description>
+	</tag>
+	<tag id="09" type="ans ...99">
+		<description>Personal data</description>
+	</tag>
+	<tag id="10" type="ans ...8">
+		<description>Service Id</description>
+	</tag>
+	<tag id="11" type="ans ...99">
+		<description>One-time Password</description>
+	</tag>
+</tags>

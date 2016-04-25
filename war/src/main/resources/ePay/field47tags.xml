@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tags>
+	<tag id="16" type="an ...256">
+		<description>SMS Notification Message Data</description>
+	</tag>
+	<tag id="27" type="ans 40">
+		<description>XID</description>
+	</tag>
+	<tag id="28" type="ans 40">
+		<description>CAVV</description>
+	</tag>
+	<tag id="30" type="n 1">
+		<description>ECAI</description>
+	</tag>
+	<tag id="33" type="an ...256">
+		<description>SMS Notification Message Data</description>
+	</tag>
+	<tag id="900" type="ans ...64">
+		<description>user data</description>
+	</tag>
+</tags>

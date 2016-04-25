@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tags>
+	<tag id="2" type="an 3">
+		<description>transaction type</description>
+	</tag>
+	<tag id="33" type="an ...256">
+		<description>Mobile Phone Number</description>
+	</tag>
+	<tag id="36" type="an ...32">
+		<description>Mobile Phone Number</description>
+	</tag>
+	<tag id="42" type="n 2">
+		<description>Security level indicator</description>
+	</tag>
+	<tag id="47" type="n ...2">
+		<description>Requested Data Type</description>
+	</tag>
+	<tag id="50" type="ans ...8">
+		<description>Payment Service Identifier</description>
+	</tag>
+	<tag id="51" type="an ...20">
+		<description>Payment Parameter</description>
+	</tag>
+	<tag id="52" type="an 2">
+		<description>Payment Pre/Post Paid Flag</description>
+	</tag>
+	<tag id="53" type="n 4">
+		<description>Additional card expiration date</description>
+		<as-object type="date" format="yyMM" />
+	</tag>
+	<tag id="57" type="an ...99">
+		<description>Payment Specific Data</description>
+	</tag>
+	<tag id="58" type="an ...99">
+		<description>Payment Specific Data</description>
+	</tag>
+	<tag id="59" type="an ...99">
+		<description>Payment Specific Data</description>
+	</tag>
+	<tag id="60" type="an ...99">
+		<description>Payment Specific Data</description>
+	</tag>
+	<tag id="88" type="n 4">
+		<description>Virtual Card expiration date</description>
+		<as-object type="date" format="MMyy" />
+	</tag>
+	<tag id="95" type="an ...2">
+		<description>Card Status</description>
+	</tag>
+	<tag id="97" type="an ...8">
+		<description>Cardholder ID</description>
+	</tag>
+</tags>

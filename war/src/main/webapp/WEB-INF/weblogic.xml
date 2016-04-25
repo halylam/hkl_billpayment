@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wls:weblogic-web-app xmlns:wls="http://xmlns.oracle.com/weblogic/weblogic-web-app" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.oracle.com/weblogic/weblogic-web-app http://xmlns.oracle.com/weblogic/weblogic-web-app/1.0/weblogic-web-app.xsd">
+	<wls:weblogic-version>10.3</wls:weblogic-version>
+	<wls:container-descriptor>
+		<wls:prefer-web-inf-classes>true</wls:prefer-web-inf-classes>
+	</wls:container-descriptor>
+	<wls:context-root>war</wls:context-root>
+	<wls:fast-swap>
+		<wls:enabled>false</wls:enabled>
+	</wls:fast-swap>
+	<wls:resource-description>
+		<wls:res-ref-name>jdbc/FEAuthorized</wls:res-ref-name>
+		<wls:jndi-name>jdbc/svwi/FEAuthorized</wls:jndi-name>
+	</wls:resource-description>
+</wls:weblogic-web-app>

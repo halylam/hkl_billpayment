@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee" xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="nullValue" value="" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/orach_default.properties</value>
+				<value>file:${billpayment.home}/conf/orach.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<context:component-scan base-package="ru.bpc.orach.hkl.billpayment.modules" />
+
+	<jee:jndi-lookup id="dsFEAuthorized" jndi-name="jdbc/FEAuthorized" expected-type="javax.sql.DataSource" />
+
+	<bean id="isoModule" class="ru.bpc.orach.hkl.billpayment.modules.Iso8583Module" init-method="init">
+		<constructor-arg index="0">
+			<util:constant static-field="ru.bpc.orach.hkl.billpayment.modules.constants.IModuleTypes.ISO" />
+		</constructor-arg>
+		<constructor-arg index="1" value="ISO" />
+		<constructor-arg index="2" value="${iso.elements}" />
+		<constructor-arg index="3" value="${iso.messages}" />
+
+		<property name="headerLength" value="${iso.headerLength}" />
+		<property name="host" value="${sv.comm.host}" />
+		<property name="port" value="${sv.comm.port}" />
+		<property name="mode" value="${sv.comm.mode}" />
+
+		<property name="originator">
+			<bean class="ru.bpc.orach.modules.iso8583.AtmIdentification">
+				<property name="terminalId" value="${terminal.terminalId}" />
+				<property name="terminalLocation" value="${terminal.terminalLocation}" />
+				<property name="merchantId" value="${terminal.merchantId}" />
+				<property name="type" value="${terminal.merchantType}" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="wsModule" class="ru.bpc.orach.hkl.billpayment.modules.WsModule">
+		<constructor-arg index="0">
+			<util:constant static-field="ru.bpc.orach.hkl.billpayment.modules.constants.IModuleTypes.WS" />
+		</constructor-arg>
+		<constructor-arg index="1" value="WS" />
+		<constructor-arg index="2" value="${billpayment.wsdlLocation}" type="java.net.URL" />
+		<constructor-arg index="3" value="${billpayment.corePoolSize}" type="int" />
+		<constructor-arg index="4" value="${billpayment.maxPoolSize}" type="int" />
+
+		<property name="username" value="${billpayment.username}" />
+		<property name="password" value="${billpayment.password}" />
+		<!-- <property name="testing" value="${billpayment.testing}" /> 
+		<property name="serviceIdRegexp" value="${billpayment.serviceIdRegexp}" />
+		<property name="payeeIndex" value="${billpayment.payeeIndex}" />
+		<property name="domainIndex" value="${billpayment.domainIndex}" />
+		<property name="amountExp" value="${billpayment.amountExp}" />-->
+		<property name="connectTimeout" value="${billpayment.connectTimeout}" />
+		<property name="requestTimeout" value="${billpayment.requestTimeout}" />
+		
+	</bean>
+
+	<bean id="modules" class="ru.bpc.orach.module.ModuleArray">
+		<constructor-arg>
+			<list value-type="ru.bpc.orach.IModule">
+				<ref bean="isoModule" />
+				<ref bean="wsModule" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="lifecycleManager" class="ru.bpc.orach.lifecycle.DefaultLifecycleManager">
+		<constructor-arg ref="modules" />
+	</bean>
+
+	<bean id="notificator" class="ru.bpc.orach.hkl.billpayment.modules.ApplicationNotificator">
+		<property name="pid" value="${billpayment.pid}" />
+	</bean>
+
+	<bean id="router" class="ru.bpc.orach.hkl.billpayment.modules.MessageRouter">
+		<constructor-arg ref="modules" />
+	</bean>
+
+	<bean id="bus" class="ru.bpc.orach.messagebus.QueuedBus">
+		<constructor-arg ref="router" />
+	</bean>
+
+	<bean id="store" class="ru.bpc.orach.persistence.DerbyStore">
+		<constructor-arg>
+			<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+				<property name="persistenceUnitName" value="billpayment.persist" />
+				<property name="loadTimeWeaver">
+					<bean class="org.springframework.context.weaving.DefaultContextLoadTimeWeaver" />
+				</property>
+				<property name="jpaVendorAdapter">
+					<bean class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter" />
+				</property>
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="service" class="ru.bpc.orach.Service" init-method="start" destroy-method="stop">
+		<property name="lifecycleManager" ref="lifecycleManager" />
+		<property name="notificator" ref="notificator" />
+		<property name="messageBus" ref="bus" />
+		<property name="messageStore" ref="store" />
+		<property name="moduleArray" ref="modules" />
+	</bean>
+
+	<bean id="metricsReporter" class="ru.bpc.orach.MetricsReporter" init-method="start" destroy-method="stop">
+		<constructor-arg ref="service" />
+	</bean>
+</beans>
