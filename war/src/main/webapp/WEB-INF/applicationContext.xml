@@ -59,8 +59,8 @@
 		<!-- <property name="testing" value="${billpayment.testing}" /> 
 		<property name="serviceIdRegexp" value="${billpayment.serviceIdRegexp}" />
 		<property name="payeeIndex" value="${billpayment.payeeIndex}" />
-		<property name="domainIndex" value="${billpayment.domainIndex}" />
-		<property name="amountExp" value="${billpayment.amountExp}" />-->
+		<property name="domainIndex" value="${billpayment.domainIndex}" /> -->
+		<property name="amountExp" value="${billpayment.amountExp}" />
 		<property name="connectTimeout" value="${billpayment.connectTimeout}" />
 		<property name="requestTimeout" value="${billpayment.requestTimeout}" />
 		

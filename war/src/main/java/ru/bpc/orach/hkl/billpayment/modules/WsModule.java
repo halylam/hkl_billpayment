@@ -3,13 +3,11 @@ package ru.bpc.orach.hkl.billpayment.modules;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,13 +42,9 @@ public class WsModule extends AThreadingModule {
     private ServiceSoap port;
     private String username;
     private String password;
-//    private String serviceIdRegexp;//NOT USE FOR HKL
-//    private boolean testing;//NOT USE FOR HKL
-//    private int payeeIndex;//NOT USE FOR HKL
-//    private int domainIndex;//NOT USE FOR HKL
     private int requestTimeout;
     private int connectTimeout;
-    private int amountExp;//NOT USE FOR HKL
+    private int amountExp;
 
     private final URL wsdlLocation;
 
@@ -71,29 +65,13 @@ public class WsModule extends AThreadingModule {
 	this.connectTimeout = connectTimeout;
     }
 
-//    public void setDomainIndex(int domainIndex) {
-//	this.domainIndex = domainIndex;
-//    }
-
     public void setPassword(String password) {
 	this.password = password;
     }
 
-//    public void setPayeeIndex(int payeeIndex) {
-//	this.payeeIndex = payeeIndex;
-//    }
-
     public void setRequestTimeout(int requestTimeout) {
 	this.requestTimeout = requestTimeout;
     }
-
-//    public void setServiceIdRegexp(String serviceIdRegexp) {
-//	this.serviceIdRegexp = serviceIdRegexp;
-//    }
-
-//    public void setTesting(boolean testing) {
-//	this.testing = testing;
-//    }
 
     public void setUsername(String username) {
 	this.username = username;
@@ -109,8 +87,9 @@ public class WsModule extends AThreadingModule {
 	String prcode = "";
 	try {
 	    prcode = IsoUtils.getFieldValue(message, IsoField.PROCESSING_CODE, null);
-	    if (prcode.equals(830000L)) { // ex: case getBillInfo
-		String billNumber = IsoUtils.getTagValue(message, IsoTag.BILL_NUMBER, null);
+	    logger.debug("prcode = " + prcode);
+	    if (prcode.equals("830000")) { // ex: case getBillInfo
+		String billNumber = "PPWSA" + IsoUtils.getTagValue(message, IsoTag.BILL_NUMBER, null);
 
 		LoginInfo loginInfo = new LoginInfo();
 		loginInfo.setBankCode(username);
@@ -126,7 +105,13 @@ public class WsModule extends AThreadingModule {
 		    logger.debug("OUTPUT getBillInfo: CUSTOMER_NUM : " + getValue(response.getCustomerNumber()));
 		    logger.debug("OUTPUT getBillInfo: CUSTOMER_ADDR : " + getValue(response.getCustomerAddress()));
 		    logger.debug("OUTPUT getBillInfo: CUSTOMER_PHONE : " + getValue(response.getPhone()));
-		    logger.debug("OUTPUT getBillInfo: BILL_AMOUNT : " + getValue(response.getBillAmount()));
+		    String strAmount = getValue(response.getBillAmount());
+		    logger.debug("OUTPUT getBillInfo: STRING_AMOUNT : " + strAmount);
+		    BigDecimal bgAmount = null;
+		    try {
+			bgAmount = new BigDecimal(strAmount).movePointRight(amountExp);
+			logger.debug("OUTPUT getBillInfo: BILL_AMOUNT : " + bgAmount);
+		    } catch (Exception e) { }
 		    logger.debug("OUTPUT getBillInfo: BILL_DATE : " + getValue(response.getBillingDate()));
 		    logger.debug("OUTPUT getBillInfo: BILL_PERIOD : " + getValue(response.getBillingPeriod()));
 
@@ -139,7 +124,7 @@ public class WsModule extends AThreadingModule {
 			IsoUtils.setTagObject(message, IsoTag.CUSTOMER_NUM_RESPONSE, getValue(response.getCustomerNumber()));
 			IsoUtils.setTagObject(message, IsoTag.CUSTOMER_ADDR, getValue(response.getCustomerAddress()));
 			IsoUtils.setTagObject(message, IsoTag.CUSTOMER_PHONE, getValue(response.getPhone()));
-			IsoUtils.setFieldObject(message, IsoField.AMOUNT_TRANSACTION, getValue(response.getBillAmount()));
+			IsoUtils.setFieldObject(message, IsoField.AMOUNT_TRANSACTION, bgAmount);
 			IsoUtils.setTagObject(message, IsoTag.BILLING_DATE, getValue(response.getBillingDate()));
 			IsoUtils.setTagObject(message, IsoTag.BILLING_PERIOD, getValue(response.getBillingPeriod()));
 		    }
@@ -148,31 +133,36 @@ public class WsModule extends AThreadingModule {
 		    logger.error("getBillInfo Response NULL: responseCode=" + responseCode);
 		}
 
-	    } else if (prcode.equals(840000L)) {// ex: case UpdateBill
+	    } else if (prcode.equals("840000")) {// ex: case UpdateBill
 		BillPaymentInfo billPaymentInfo = new BillPaymentInfo();
 
-		String billNumber = IsoUtils.getTagValue(message, IsoTag.BILL_NUMBER, null);
-		String billAmount = IsoUtils.getFieldValue(message, IsoField.AMOUNT_TRANSACTION, null);
+		String billNumber = "PPWSA" + IsoUtils.getTagValue(message, IsoTag.BILL_NUMBER, null);
+		String strAmount = IsoUtils.getFieldValue(message, IsoField.AMOUNT_TRANSACTION, null);
+		logger.debug("INPUT UpdateBill: strAmount=" + strAmount);
+		BigDecimal bgAmount = null;
+		try {
+		    bgAmount = new BigDecimal(strAmount).movePointLeft(amountExp);
+		} catch (Exception e) { }		
 		String paymentDate = IsoUtils.getFieldValue(message, IsoField.PAYMENT_DATE, null);
 		String customerNum = IsoUtils.getTagValue(message, IsoTag.CUSTOMER_NUM_RESQUEST, null);
 
 		billPaymentInfo.setBillNumber(billNumber);
-		billPaymentInfo.setBillAmount(billAmount);
+		billPaymentInfo.setBillAmount(bgAmount.toString());
 		billPaymentInfo.setPaymentDate(paymentDate);
 		billPaymentInfo.setCustomerNumber(customerNum);
 
-		logger.debug("INPUT UpdateBill: billNumber=" + billNumber + " - billAmount=" + billAmount + " -paymentDate" + paymentDate
+		logger.debug("INPUT UpdateBill: billNumber=" + billNumber + " - billAmount=" + bgAmount + " -paymentDate" + paymentDate
 			+ " -customerNum" + customerNum);
 
 		String checkSum = "";
-		if (customerNum != null && customerNum.length() > 4) {
-		    ;
+		if (customerNum != null && customerNum.length() > 4 && bgAmount != null && bgAmount.toString().length() > 3) {
 		    try {
 			int cusNum = Integer.parseInt(customerNum.substring(customerNum.length() - 4));
-			int amount = Integer.parseInt(billAmount.substring(0, 3));
+			int amount = Integer.parseInt(bgAmount.toString().substring(0, 3));
 			checkSum = String.valueOf(cusNum * amount);
+			logger.debug("INPUT UpdateBill: checkSum=" + checkSum);
 		    } catch (Exception e) {
-			logger.error("Exception checkSum: customerNum=" + customerNum + " - billAmount=" + billAmount);
+			logger.error("Exception checkSum: customerNum=" + customerNum + " - billAmount=" + bgAmount);
 			onError(e, uc);
 		    }
 		}
@@ -239,7 +229,6 @@ public class WsModule extends AThreadingModule {
 	ctx.put(CONNECT_TIMEOUT_PROPERTY_3, connectTimeout);
     }
 
-    @SuppressWarnings("unused")
     private String getValue(String value) {
 	return value;
     }

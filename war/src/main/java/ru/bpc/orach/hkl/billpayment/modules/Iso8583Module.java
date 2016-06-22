@@ -19,7 +19,6 @@ import ru.bpc.orach.IDataPacket;
 import ru.bpc.orach.IDataPacketUpdateContext;
 import ru.bpc.orach.hkl.billpayment.modules.constants.IErrors;
 import ru.bpc.orach.hkl.billpayment.modules.constants.IMessageFields;
-import ru.bpc.orach.hkl.billpayment.modules.enums.ErrorCode;
 import ru.bpc.orach.modules.iso8583.AFrontEndModule;
 import ru.bpc.orach.modules.iso8583.AtmIdentification;
 
@@ -82,12 +81,18 @@ public class Iso8583Module extends AFrontEndModule {
 	    if (response instanceof MessageType) {
 		String prcode = IsoUtils.getFieldValue((MessageType) response, IsoField.PROCESSING_CODE, null);
 		logger.debug("CALL Iso8583Module: internalProcess: prcode=" + prcode);
-		if (prcode.equals(830000L)) {
+		if (prcode.equals("830000")) {
 		    isoMsg = createMessage(110);
-		} else if (prcode.equals(840000L)) {
+		    logger.debug("createMessage(110) successful");
+		} else if (prcode.equals("840000")) {
 		    isoMsg = createMessage(210);
+		    logger.debug("createMessage(210) successful");
 		}
-		IsoUtils.restoreIsoState(isoMsg, (MessageType) response);
+		if (isoMsg != null) {
+		    IsoUtils.restoreIsoState(isoMsg, (MessageType) response);
+		} else {
+		    logger.debug("isoMsg NULL");
+		}		
 	    }
 	    sendMessage(isoMsg, originator, Long.MAX_VALUE);
 	    logger.debug("Message [id={}] sent to FE", msg.getId());
