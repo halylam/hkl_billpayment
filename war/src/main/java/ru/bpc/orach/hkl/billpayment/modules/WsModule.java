@@ -2,6 +2,7 @@ package ru.bpc.orach.hkl.billpayment.modules;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.Date;
 import java.util.Map;
 
 import javax.xml.bind.JAXBElement;
@@ -111,7 +112,8 @@ public class WsModule extends AThreadingModule {
 		    try {
 			bgAmount = new BigDecimal(strAmount).movePointRight(amountExp);
 			logger.debug("OUTPUT getBillInfo: BILL_AMOUNT : " + bgAmount);
-		    } catch (Exception e) { }
+		    } catch (Exception e) {
+		    }
 		    logger.debug("OUTPUT getBillInfo: BILL_DATE : " + getValue(response.getBillingDate()));
 		    logger.debug("OUTPUT getBillInfo: BILL_PERIOD : " + getValue(response.getBillingPeriod()));
 
@@ -142,8 +144,13 @@ public class WsModule extends AThreadingModule {
 		BigDecimal bgAmount = null;
 		try {
 		    bgAmount = new BigDecimal(strAmount).movePointLeft(amountExp);
-		} catch (Exception e) { }		
+		} catch (Exception e) {}
 		String paymentDate = IsoUtils.getFieldValue(message, IsoField.PAYMENT_DATE, null);
+		if (paymentDate != null && paymentDate.length() > 5) {
+		    paymentDate = paymentDate.substring(4, 6) + "/" + paymentDate.substring(2, 4) + "/"
+			    + String.valueOf(new Date().getYear() + 1900).substring(0, 2) + paymentDate.substring(0, 2);
+		}
+
 		String customerNum = IsoUtils.getTagValue(message, IsoTag.CUSTOMER_NUM_RESQUEST, null);
 
 		billPaymentInfo.setBillNumber(billNumber);
@@ -151,8 +158,8 @@ public class WsModule extends AThreadingModule {
 		billPaymentInfo.setPaymentDate(paymentDate);
 		billPaymentInfo.setCustomerNumber(customerNum);
 
-		logger.debug("INPUT UpdateBill: billNumber=" + billNumber + " - billAmount=" + bgAmount + " -paymentDate" + paymentDate
-			+ " -customerNum" + customerNum);
+		logger.debug("INPUT UpdateBill: billNumber=" + billNumber + " - billAmount=" + bgAmount + " -paymentDate=" + paymentDate
+			+ " -customerNum=" + customerNum);
 
 		String checkSum = "";
 		if (customerNum != null && customerNum.length() > 4 && bgAmount != null && bgAmount.toString().length() > 3) {
@@ -170,7 +177,7 @@ public class WsModule extends AThreadingModule {
 		loginInfo.setBankCode(username);
 		loginInfo.setPassword(password);
 
-		logger.debug("INPUT UpdateBill: checkSum=" + checkSum + " - username=" + username + " -password" + password);
+		logger.debug("INPUT UpdateBill: checkSum=" + checkSum + " - username=" + username + " -password=" + password);
 
 		UpdateStatus response = port.updateBill(billPaymentInfo, loginInfo, checkSum);
 		if (response != null && response.getStatusMessage() != null) {
@@ -184,6 +191,9 @@ public class WsModule extends AThreadingModule {
 		    } else if ("Bill has been paid previously".equalsIgnoreCase(statuMess)) {
 			responseCode = ErrorCode.TRANSACTION_UNSUCCESSFUL.getCode();
 			logger.debug("OUTPUT UpdateBill:  Bill was paid: responseCode=" + responseCode);
+		    } else { // For other status message not mention in spec.
+			responseCode = ErrorCode.TRANSACTION_UNSUCCESSFUL.getCode();
+			logger.debug("OUTPUT UpdateBill:  Status message is not defined in spec: responseCode=" + responseCode);
 		    }
 		} else {
 		    responseCode = ErrorCode.TRANSACTION_UNSUCCESSFUL.getCode();
