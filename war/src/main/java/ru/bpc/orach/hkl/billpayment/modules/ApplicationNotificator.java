@@ -44,7 +44,7 @@ public class ApplicationNotificator implements INotificator {
 
     private void updateStatus(ApplicationStatus status) {
 	UpdateQuery update = new UpdateQuery();
-	update.table("t_epay_stat").key("pid", pid).value("oper_stat", EnumUtils.getId(status));
+	update.table("SVISTA.t_epay_stat@PAYGATE_LINK").key("pid", pid).value("oper_stat", EnumUtils.getId(status));
 	if (update.update(dsFEAuthorized).getCount() == 0) {
 	    logger.warn("No epay_stat records found for pid {}", pid);
 	}
