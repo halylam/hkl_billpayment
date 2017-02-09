@@ -96,7 +96,7 @@ public class WsModule extends AThreadingModule {
 				loginInfo.setBankCode(username);
 				loginInfo.setPassword(password);
 
-				logger.debug("INPUT getBillInfo: billNumber=" + billNumber + " - username=" + username + " - password=" + password);
+				logger.debug("INPUT getBillInfo: billNumber=" + billNumber);
 
 				BillInfo response = port.getBillInfo(billNumber, loginInfo);
 
@@ -177,7 +177,7 @@ public class WsModule extends AThreadingModule {
 				loginInfo.setBankCode(username);
 				loginInfo.setPassword(password);
 
-				logger.debug("INPUT UpdateBill: checkSum=" + checkSum + " - username=" + username + " -password=" + password);
+				logger.debug("INPUT UpdateBill: checkSum=" + checkSum);
 
 				UpdateStatus response = port.updateBill(billPaymentInfo, loginInfo, checkSum);
 				if (response != null && response.getStatusMessage() != null) {

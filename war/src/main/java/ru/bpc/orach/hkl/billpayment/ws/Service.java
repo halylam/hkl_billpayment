@@ -3,14 +3,14 @@ package ru.bpc.orach.hkl.billpayment.ws;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PPWSA Billing WebServices v1.0905<br />
@@ -21,7 +21,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "Service", targetNamespace = "http://119.82.253.240/", wsdlLocation = "https://webservices.ppwsa.com.kh/?wsdl")
+@WebServiceClient(name = "Service", targetNamespace = "http://119.82.253.240/", wsdlLocation = "https://webservice.ppwsa.com.kh/?wsdl")
 public class Service
     extends javax.xml.ws.Service
 {
@@ -35,9 +35,9 @@ public class Service
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("https://webservices.ppwsa.com.kh/?wsdl");
+            url = new URL("https://webservice.ppwsa.com.kh/?wsdl");
         } catch (MalformedURLException ex) {
-            logger.debug("$$$: Failed to create URL for the wsdl Location: 'https://webservices.ppwsa.com.kh/?wsdl', retrying as a local file");
+            logger.debug("$$$: Failed to create URL for the wsdl Location: 'https://webservice.ppwsa.com.kh/?wsdl', retrying as a local file");
             logger.debug("$$$: "+ex.getMessage());
         }
         SERVICE_WSDL_LOCATION = url;
@@ -48,25 +48,25 @@ public class Service
         super(__getWsdlLocation(), SERVICE_QNAME);
     }
 
-//    public Service(WebServiceFeature... features) {
-//        super(__getWsdlLocation(), SERVICE_QNAME, features);
-//    }
+    public Service(WebServiceFeature... features) {
+        super(__getWsdlLocation(), SERVICE_QNAME, features);
+    }
 
     public Service(URL wsdlLocation) {
         super(wsdlLocation, SERVICE_QNAME);
     }
 
-//    public Service(URL wsdlLocation, WebServiceFeature... features) {
-//        super(wsdlLocation, SERVICE_QNAME, features);
-//    }
+    public Service(URL wsdlLocation, WebServiceFeature... features) {
+        super(wsdlLocation, SERVICE_QNAME, features);
+    }
 
     public Service(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-//    public Service(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
-//        super(wsdlLocation, serviceName, features);
-//    }
+    public Service(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
+        super(wsdlLocation, serviceName, features);
+    }
 
     /**
      * 

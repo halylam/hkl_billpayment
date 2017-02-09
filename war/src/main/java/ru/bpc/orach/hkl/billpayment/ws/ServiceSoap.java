@@ -36,7 +36,7 @@ public interface ServiceSoap {
     public String webServiceResponseTest();
 
     /**
-     * Get <b>List of Bills</b> based on <b>Customer Number</b>.
+     * Get <b>List of Bills</b> based on <b>Customer Number</b>. 
      * 
      * @param loginInfo
      * @param customerNumber
@@ -54,7 +54,7 @@ public interface ServiceSoap {
         LoginInfo loginInfo);
 
     /**
-     * Get <b>Bill Information</b> based on <b>Bill Number</b>.
+     * Get <b>Bill Information</b> based on <b>Bill Number</b>. 
      * 
      * @param billNumber
      * @param loginInfo
