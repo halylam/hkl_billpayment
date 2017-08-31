@@ -15,38 +15,38 @@ import ru.bpc.utils.EnumUtils;
 
 @Component
 public class ApplicationNotificator implements INotificator {
-    private final static Logger logger = LoggerFactory.getLogger(ApplicationNotificator.class);
+	private final static Logger logger = LoggerFactory.getLogger(ApplicationNotificator.class);
 
-    @Resource
-    private DataSource dsFEAuthorized;
-    private int pid;
+	@Resource
+	private DataSource dsFEAuthorized;
+	private int pid;
 
-    @Override
-    public void notify(String summary, String details, IModule module) {
-	logger.warn("{}: {}", module.getId(), summary);
-    }
-
-    @Override
-    public void start() {
-	updateStatus(ApplicationStatus.ONLINE);
-	logger.info("Billpayment started");
-    }
-
-    @Override
-    public void stop() {
-	updateStatus(ApplicationStatus.OFFLINE);
-	logger.info("Billpayment stopped");
-    }
-
-    public void setPid(int pid) {
-	this.pid = pid;
-    }
-
-    private void updateStatus(ApplicationStatus status) {
-	UpdateQuery update = new UpdateQuery();
-	update.table("SVISTA.t_epay_stat@PAYGATE_LINK").key("pid", pid).value("oper_stat", EnumUtils.getId(status));
-	if (update.update(dsFEAuthorized).getCount() == 0) {
-	    logger.warn("No epay_stat records found for pid {}", pid);
+	@Override
+	public void notify(String summary, String details, IModule module) {
+		logger.warn("{}: {}", module.getId(), summary);
 	}
-    }
+
+	@Override
+	public void start() {
+		updateStatus(ApplicationStatus.ONLINE);
+		logger.info("Billpayment started");
+	}
+
+	@Override
+	public void stop() {
+		updateStatus(ApplicationStatus.OFFLINE);
+		logger.info("Billpayment stopped");
+	}
+
+	public void setPid(int pid) {
+		this.pid = pid;
+	}
+
+	private void updateStatus(ApplicationStatus status) {
+		UpdateQuery update = new UpdateQuery();
+		update.table("SVISTA.t_epay_stat@PAYGATE_LINK").key("pid", pid).value("oper_stat", EnumUtils.getId(status));
+		if (update.update(dsFEAuthorized).getCount() == 0) {
+			logger.warn("No epay_stat records found for pid {}", pid);
+		}
+	}
 }

@@ -63,6 +63,14 @@ public class Iso8583Module extends AFrontEndModule {
 					getMessageBus().receivedNew(msg, this);
 				}
 			}
+		} else if (objectMessage.getType() == 800) {
+			logger.debug("CALL processRequest: EchoTest");
+			MessageType message = IsoUtils.saveIsoState(objectMessage, null);
+			IDataMessage msg = getMessageStore().createMessage();
+			IDataPacketUpdateContext uc = msg.getDataPacket().getUpdateContext(this);
+			uc.setObject(IMessageFields.ISO_MESSAGE, message);
+			uc.apply();
+			getMessageBus().receivedNew(msg, this);
 		}
 	}
 
@@ -87,6 +95,9 @@ public class Iso8583Module extends AFrontEndModule {
 				} else if (prcode.equals("840000")) {
 					isoMsg = createMessage(210);
 					logger.debug("createMessage(210) successful");
+				} else {
+					isoMsg = createMessage(810);
+					logger.debug("createMessage(810) successful");
 				}
 				if (isoMsg != null) {
 					IsoUtils.restoreIsoState(isoMsg, (MessageType) response);
